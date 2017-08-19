@@ -18,6 +18,12 @@
 #include "PaillierAdapter.hpp"
 #include <set>
 #include <iostream>
+#include <cstdio>
+#include <boost/python.hpp>
+#include <Python.h>
+#include <string>
+
+using namespace boost::python;
 namespace {
 const int kMagicConstant1 = 1;
 const int kMillion = 1000000;
@@ -627,4 +633,28 @@ void PaillierAdapter::e_add(mpz_t res, mpz_t a, mpz_t b, int s)
 void PaillierAdapter::e_mul_const(mpz_t res, mpz_t a, mpz_t n, int s)
 {
 	mpz_powm(res, a, n , *publicParameters.getPubKey()->getnj(s));
+}
+
+std::string PaillierAdapter::encrypt1(unsigned int a, unsigned int b){
+  char *p = encrypt(a,b);
+
+  return std::string(p);
+}
+
+std::string PaillierAdapter::decrypt1(char* cipheredData, unsigned int rec_lvl, size_t a, size_t b){
+  char *p = decrypt(cipheredData, rec_lvl, a, b);
+
+  return std::string(p);
+}
+
+BOOST_PYTHON_MODULE(libPaillierAdapter){
+    class_<PaillierAdapter>("PaillierAdapter", init<>())
+        // .def_readonly("cryptoName", &HomomorphicCrypto::cryptoName)
+        // .def_readonly("default_security_bits", &HomomorphicCrypto::default_security_bits)
+        .def(init<int,int>())
+        .def("e_add", &PaillierAdapter::e_add)
+        .def("e_mul_const", &PaillierAdapter::e_mul_const)
+        .def("encrypt", &PaillierAdapter::encrypt1)
+        .def("decrypt", &PaillierAdapter::decrypt1)
+        ;
 }

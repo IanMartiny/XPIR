@@ -73,10 +73,12 @@ class PaillierAdapter : public HomomorphicCrypto {
 		PaillierPublicParameters publicParameters;
 		
 		/*Methods*/
+		std::string encrypt1(unsigned int a, unsigned int b);
 		char* encrypt(unsigned int ui, unsigned int);
 		char* encrypt(char* data, size_t, unsigned int exponent);
-    char* encrypt_perftest();
+	    char* encrypt_perftest();
 		char* decrypt(char* cipheredData, unsigned int rec_lvl, size_t, size_t);
+		std::string decrypt1(char* cipheredData, unsigned int rec_lvl, size_t, size_t);
     unsigned int getCryptoParams(unsigned int k,set<std::string>& crypto_params);
     unsigned int getAllCryptoParams(set<std::string>& crypto_params);
     long setandgetAbsBitPerCiphertext(unsigned int elt_nbr);

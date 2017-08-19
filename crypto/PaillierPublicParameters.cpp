@@ -17,6 +17,10 @@
 
 #include "PaillierPublicParameters.hpp"
 #include <iostream>
+#include <boost/python.hpp>
+#include <Python.h>
+
+using namespace boost::python;
 
 PaillierPublicParameters::PaillierPublicParameters()
 {
@@ -139,4 +143,7 @@ void PaillierPublicParameters::setMockedPubKey()
   pubkey.init_key(getKeyBitsize());
 }
     
-
+BOOST_PYTHON_MODULE(libPaillierPublicParameters){
+    class_<PaillierPublicParameters>("PaillierPublicParameters", init<>())
+        ;
+}
