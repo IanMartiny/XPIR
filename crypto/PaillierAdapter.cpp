@@ -647,6 +647,11 @@ std::string PaillierAdapter::decrypt1(char* cipheredData, unsigned int rec_lvl, 
   return std::string(p);
 }
 
+PaillierPublicParameters& PaillierAdapter::getPublicParameters1() 
+{
+  return publicParameters;
+}
+
 BOOST_PYTHON_MODULE(libPaillierAdapter){
     class_<PaillierAdapter>("PaillierAdapter", init<>())
         // .def_readonly("cryptoName", &HomomorphicCrypto::cryptoName)
@@ -656,5 +661,7 @@ BOOST_PYTHON_MODULE(libPaillierAdapter){
         .def("e_mul_const", &PaillierAdapter::e_mul_const)
         .def("encrypt", &PaillierAdapter::encrypt1)
         .def("decrypt", &PaillierAdapter::decrypt1)
+        .def("getPublicParameters", &PaillierAdapter::getPublicParameters1,
+          return_internal_reference<>())
         ;
 }

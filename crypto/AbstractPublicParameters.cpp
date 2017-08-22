@@ -17,3 +17,10 @@
 
 #include "AbstractPublicParameters.hpp"
 
+#include <boost/python.hpp>
+#include <Python.h>
+
+using namespace boost::python;
+BOOST_PYTHON_MODULE(libAbstractPublicParameters){
+    class_<AbstractPublicParameters, boost::noncopyable>("AbstractPublicParameters", no_init);
+}

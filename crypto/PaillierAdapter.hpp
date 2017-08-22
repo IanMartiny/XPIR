@@ -89,7 +89,8 @@ class PaillierAdapter : public HomomorphicCrypto {
 		~PaillierAdapter(void);
 		
     double estimateAbsTime(std::string crypto_param);
-		AbstractPublicParameters&  getPublicParameters(void);
+		AbstractPublicParameters& getPublicParameters(void);
+		PaillierPublicParameters& getPublicParameters1(void);
 		double getDecCost(unsigned int length, unsigned int s);
 		void setNewParameters(const std::string& crypto_params);
 
