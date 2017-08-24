@@ -19,6 +19,10 @@
 #include <iostream>
 #include <cstring>
 
+#include <boost/python.hpp>
+#include <Python.h>
+
+using namespace boost::python;
 /*************** PRVKEY**************/
 paillier_prvkey::paillier_prvkey(){
   init_key();
@@ -169,6 +173,12 @@ mpz_t* paillier_pubkey::getg()
   return &g;
 }
 
+// paillier_pubkey_wrap paillier_pubkey::getg1(){
+//   paillier_pubkey_wrap pub_wrap;
+//   pub_wrap.setg(&g);
+//   return pub_wrap;
+// }
+
 int paillier_pubkey::getbits()
 {
   return bits;
@@ -185,3 +195,20 @@ void paillier_pubkey::setbits(int bits_)
   bits = bits_;
 } 
 
+/************************** pubkey_wrap**************/
+
+// paillier_pubkey_wrap::paillier_pubkey_wrap(){ 
+//   mpz_init_set_ui(g,1);
+// }
+
+// void paillier_pubkey_wrap::setg(mpz_t* og){
+//   mpz_set(g, *og);
+// }
+
+BOOST_PYTHON_MODULE(libPaillierPublicKey){
+    class_<paillier_pubkey>("paillier_pubkey", init<>())
+    .def_readonly("g", &paillier_pubkey::g)
+    // .def("getg", &paillier_pubkey::getg1)
+    // .def("getnj", &paillier_pubkey::getnj)
+        ;
+}

@@ -621,6 +621,29 @@ void PaillierAdapter::e_add(mpz_t res, mpz_t a, mpz_t b, int s)
 	mpz_mod(res, res, *publicParameters.getPubKey()->getnj(s));
 }
 
+std::string PaillierAdapter::e_add_wrap(std::string ct1, std::string ct2, unsigned int rec_lvl){
+  std::string decoded1 = base64_decode(ct1);
+  std::string decoded2 = base64_decode(ct2);
+
+  mpz_t res, a, b;
+  mpz_inits(res, a, b, NULL);
+  mpz_import(a, this->getPublicParameters().getCiphBitsizeFromRecLvl(rec_lvl)/8, 1, sizeof(char), 0, 0, decoded1.c_str());
+  mpz_import(b, this->getPublicParameters().getCiphBitsizeFromRecLvl(rec_lvl)/8, 1, sizeof(char), 0, 0, decoded2.c_str());
+
+  int init_s = (*((PaillierPublicParameters*) &(this->getPublicParameters()))).getPubKey()->getinit_s();
+  int dim = 1;
+
+
+  this->e_add(res, a, b, init_s+1+dim);
+
+  char *ct3 = (char*)mpz_export(NULL, NULL, 1, sizeof(char) , 0, 0, res);
+
+  std::string s = base64_encode(reinterpret_cast<const unsigned char*>(ct3), this->getPublicParameters().getCiphBitsizeFromRecLvl(rec_lvl)/8);
+  free(ct3);
+  mpz_clears(a, b, res, NULL);
+
+  return s;
+}
 /**
  *	Compute modular multiplication in crypted space who is a multiplicaton in clear space.
  *	Params :
@@ -634,32 +657,56 @@ void PaillierAdapter::e_mul_const(mpz_t res, mpz_t a, mpz_t n, int s)
 	mpz_powm(res, a, n , *publicParameters.getPubKey()->getnj(s));
 }
 
+std::string PaillierAdapter::e_mul_wrap(std::string ct1, std::string ct2, unsigned int rec_lvl){
+  std::string decoded1 = base64_decode(ct1);
+  std::string decoded2 = base64_decode(ct2);
+
+  mpz_t res, a, b;
+  mpz_inits(res, a, b, NULL);
+  mpz_import(a, this->getPublicParameters().getCiphBitsizeFromRecLvl(rec_lvl)/8, 1, sizeof(char), 0, 0, decoded1.c_str());
+  mpz_import(b, this->getPublicParameters().getCiphBitsizeFromRecLvl(rec_lvl)/8, 1, sizeof(char), 0, 0, decoded2.c_str());
+
+  int init_s = (*((PaillierPublicParameters*) &(this->getPublicParameters()))).getPubKey()->getinit_s();
+  int dim = 1;
+
+
+  this->e_mul_const(res, a, b, init_s+1+dim);
+
+  char *ct3 = (char*)mpz_export(NULL, NULL, 1, sizeof(char) , 0, 0, res);
+
+  std::string s = base64_encode(reinterpret_cast<const unsigned char*>(ct3), this->getPublicParameters().getCiphBitsizeFromRecLvl(rec_lvl)/8);
+  free(ct3);
+  mpz_clears(a, b, res, NULL);
+
+  return s;
+}
 std::string PaillierAdapter::encrypt1(unsigned int a, unsigned int b){
   char *p = encrypt(a,b);
 
-  return base64_encode(reinterpret_cast<const unsigned char*>(p), this->getPublicParameters().getAbsorptionBitsize(b-1)/8);
+  std::string s = base64_encode(reinterpret_cast<const unsigned char*>(p), this->getPublicParameters().getCiphBitsizeFromRecLvl(b)/8);
+  free(p);
+  return s;
 }
 
 std::string PaillierAdapter::encrypt2(char* data, size_t dataSize,  unsigned int exponent){
   char *p = encrypt(data, dataSize, exponent);
 
-  return base64_encode(reinterpret_cast<const unsigned char*>(p), this->getPublicParameters().getAbsorptionBitsize(exponent-1)/8);
+  std::string s = base64_encode(reinterpret_cast<const unsigned char*>(p), this->getPublicParameters().getCiphBitsizeFromRecLvl(exponent)/8);
+  free(p);
+  return s;
 }
 
 std::string PaillierAdapter::decrypt1(std::string cipheredData, unsigned int rec_lvl, size_t a, size_t b){
   std::string decoded = base64_decode(cipheredData);
-  size_t length = ((cipheredData.length()*3)/4)+1; // length of string times scaling factor of shrinking from base64
-  char *cD = new char [length];
-  strncpy(cD, decoded.c_str(), length);
+  char *cD = (char *) malloc(decoded.length());
+  memcpy(cD, decoded.data(), decoded.length());
   char *p = decrypt(cD, rec_lvl, a, b);
   int i;
-  for (i=0; i<this->getPublicParameters().getAbsorptionBitsize(rec_lvl-1)/8; i++) {
-    printf("%02x ", (unsigned char)p[i]);
-  }
-    cout<<endl;
 
-  delete [] cD;
-  return base64_encode(reinterpret_cast<const unsigned char*>(p), this->getPublicParameters().getAbsorptionBitsize(rec_lvl-1)/8);
+  free(cD);
+  std::string s = base64_encode(reinterpret_cast<const unsigned char*>(p), this->getPublicParameters().getAbsorptionBitsize(rec_lvl-1)/8);
+  free(p);
+  return s;
 }
 
 PaillierPublicParameters& PaillierAdapter::getPublicParameters1() 
@@ -680,6 +727,8 @@ BOOST_PYTHON_MODULE(libPaillierAdapter){
         .def("decrypt", &PaillierAdapter::decrypt1)
         .def("getPublicParameters", &PaillierAdapter::getPublicParameters1,
           return_internal_reference<>())
+        .def("e_add_wrap", &PaillierAdapter::e_add_wrap)
+        .def("e_mul_wrap", &PaillierAdapter::e_mul_wrap)
         ;
 
     // class_<PaillierPublicParameters>("PaillierPublicParameters", init<>())

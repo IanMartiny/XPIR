@@ -12,9 +12,7 @@ int main(void){
     // char *ct = cryptoMethod.encrypt(&str[0u], str.length(), 1);
     char *ct = cryptoMethod.encrypt(3,2);
     char *ct2 = cryptoMethod.encrypt(5,2);
-    char *ct4 = cryptoMethod.encrypt(3,2);
-    cout<<base64_encode(reinterpret_cast<const unsigned char*>(ct), strlen(ct))<<endl;
-    cout<<base64_encode(reinterpret_cast<const unsigned char*>(ct), strlen(ct4))<<endl;
+    // cout<<base64_encode(reinterpret_cast<const unsigned char*>(ct), cryptoMethod.getPublicParameters().getCiphBitsizeFromRecLvl(2)/8)<<endl;
 
     char *pt = cryptoMethod.decrypt(ct, 2, cryptoMethod.getPublicParameters().getCiphBitsizeFromRecLvl(2)/8, cryptoMethod.getPublicParameters().getAbsorptionBitsize(1)/8);
     std::cout<<cryptoMethod.getPublicParameters().getCiphBitsizeFromRecLvl(2)/8<<std::endl;
@@ -45,7 +43,7 @@ int main(void){
     // cout<<"init_s = "<<init_s<<endl;
 
     int dim = 1;
-    cryptoMethod.e_add(res, a, b, init_s+1+dim);
+    cryptoMethod.e_mul_const(res, a, b, init_s+1+dim);
     char *ct3 = (char*)mpz_export(NULL, NULL, 1, sizeof(char) , 0, 0, res);
     char *pt2 = cryptoMethod.decrypt(ct3, 1, cryptoMethod.getPublicParameters().getCiphBitsizeFromRecLvl(2)/8, cryptoMethod.getPublicParameters().getAbsorptionBitsize(1)/8);
 

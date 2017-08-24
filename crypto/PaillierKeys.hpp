@@ -34,6 +34,13 @@ public:
   ~paillier_prvkey();
 };
 
+// class paillier_pubkey_wrap{
+// public:
+//   paillier_pubkey_wrap();
+//   void setg(mpz_t*);
+//   mpz_t g;
+// };
+
 class paillier_pubkey
 {
 public:
@@ -49,6 +56,7 @@ public:
   mpz_t* getnj(int s);
   // Simple getters
   mpz_t* getg();
+  // paillier_pubkey_wrap getg1();
   int getinit_s();
   int getbits();
   // Simple setters
@@ -56,7 +64,7 @@ public:
   void setbits(int bits_);
 
   void clear_key();
-private:
+// private:
   // Bit-size of the modulus
   int bits; 
   // nj[s] is n^s, nj[0] is therefore 1 (should not be used)
@@ -68,5 +76,6 @@ private:
   // Function initializing nj[i] for i>=2 when needed
   void init_nj(int i);
 };
+
 
 #endif

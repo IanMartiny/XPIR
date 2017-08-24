@@ -9,5 +9,6 @@ compile: PaillierKeys.cpp PaillierPublicParameters.cpp PaillierAdapter.cpp Paill
 
 link: PaillierKeys.o AbstractPublicParameters.o HomomorphicCrypto.o PaillierPrivateParameters.o PaillierPublicParameters.o PaillierAdapter.o PaillierKeys.o base64.o
 	g++ -shared -Wl,-soname,libPaillierPublicParameters.so -Wl,--no-undefined -o libPaillierPublicParameters.so AbstractPublicParameters.o PaillierKeys.o PaillierPublicParameters.o -lpython2.7 -lboost_python -lgmp -fopenmp
+	g++ -shared -Wl,-soname,libPaillierPublicKey.so -Wl,--no-undefined -o libPaillierPublicKey.so PaillierKeys.o -lpython2.7 -lboost_python -lgmp -fopenmp
 	g++ -shared -Wl,-soname,libPaillierAdapter.so -Wl,--no-undefined -o libPaillierAdapter.so HomomorphicCrypto.o PaillierPrivateParameters.o PaillierAdapter.o PaillierKeys.o AbstractPublicParameters.o PaillierPublicParameters.o base64.o -lpython2.7 -lboost_python -lgmp -lgmpxx -fopenmp
 

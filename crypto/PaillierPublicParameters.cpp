@@ -150,5 +150,6 @@ BOOST_PYTHON_MODULE(libPaillierPublicParameters){
     class_<PaillierPublicParameters>("PaillierPublicParameters", init<>())
     .def("getCiphBitsizeFromRecLvl", &PaillierPublicParameters::getCiphBitsizeFromRecLvl)
     .def("getAbsorptionBitsize", getAbsorptionBitsizex1)
+    .def("getPubKey", &PaillierPublicParameters::getPubKey, return_internal_reference<>())
         ;
 }

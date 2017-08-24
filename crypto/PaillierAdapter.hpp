@@ -68,8 +68,10 @@ class PaillierAdapter : public HomomorphicCrypto {
     void initRandomGenerator();
 
 	public:
+		std::string e_add_wrap(std::string ct1, std::string ct2, unsigned int rec_lvl);
 		void e_add(mpz_t res, mpz_t a, mpz_t b, int);
 		void e_mul_const(mpz_t res, mpz_t a, mpz_t n, int);
+		std::string e_mul_wrap(std::string ct1, std::string ct2, unsigned int rec_lvl);
 		static unsigned int securityToModulus(int); 
 		/*Attributs*/
 		PaillierPublicParameters publicParameters;
