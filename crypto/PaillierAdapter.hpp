@@ -77,6 +77,7 @@ class PaillierAdapter : public HomomorphicCrypto {
 		/*Methods*/
 		std::string encrypt1(unsigned int a, unsigned int b);
 		std::string encrypt2(char* data, size_t dataSize,  unsigned int exponent);
+		void encrypt_test(unsigned int a, unsigned int b);
 		char* encrypt(unsigned int ui, unsigned int);
 		char* encrypt(char* data, size_t, unsigned int exponent);
 	    char* encrypt_perftest();
