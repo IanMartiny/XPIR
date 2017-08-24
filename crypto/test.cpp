@@ -12,16 +12,18 @@ int main(void){
     // char *ct = cryptoMethod.encrypt(&str[0u], str.length(), 1);
     char *ct = cryptoMethod.encrypt(3,2);
     char *ct2 = cryptoMethod.encrypt(5,2);
-    // cout<<base64_encode(reinterpret_cast<const unsigned char*>(ct), strlen(ct))<<endl;
+    char *ct4 = cryptoMethod.encrypt(3,2);
+    cout<<base64_encode(reinterpret_cast<const unsigned char*>(ct), strlen(ct))<<endl;
+    cout<<base64_encode(reinterpret_cast<const unsigned char*>(ct), strlen(ct4))<<endl;
 
-    // char *pt = cryptoMethod.decrypt(ct, 1, cryptoMethod.getPublicParameters().getCiphBitsizeFromRecLvl(2)/8, cryptoMethod.getPublicParameters().getAbsorptionBitsize(1)/8);
+    char *pt = cryptoMethod.decrypt(ct, 2, cryptoMethod.getPublicParameters().getCiphBitsizeFromRecLvl(2)/8, cryptoMethod.getPublicParameters().getAbsorptionBitsize(1)/8);
     std::cout<<cryptoMethod.getPublicParameters().getCiphBitsizeFromRecLvl(2)/8<<std::endl;
     std::cout<<cryptoMethod.getPublicParameters().getAbsorptionBitsize(1)/8<<std::endl;
     int i;
-    // for (i=0; i<cryptoMethod.getPublicParameters().getAbsorptionBitsize(1)/8; i++) {
-    //     printf("%02x ", (unsigned char)pt[i]);
-    // }
-    // cout<<endl;
+    for (i=0; i<cryptoMethod.getPublicParameters().getAbsorptionBitsize(1)/8; i++) {
+        printf("%02x ", (unsigned char)pt[i]);
+    }
+    cout<<endl;
 
     // for (i=0; i<cryptoMethod.getPublicParameters().getCiphBitsizeFromRecLvl(2)/8; i++) {
     //     printf("%02x ", (unsigned char)ct[i]);
@@ -45,10 +47,10 @@ int main(void){
     int dim = 1;
     cryptoMethod.e_add(res, a, b, init_s+1+dim);
     char *ct3 = (char*)mpz_export(NULL, NULL, 1, sizeof(char) , 0, 0, res);
-    char *pt = cryptoMethod.decrypt(ct3, 1, cryptoMethod.getPublicParameters().getCiphBitsizeFromRecLvl(2)/8, cryptoMethod.getPublicParameters().getAbsorptionBitsize(1)/8);
+    char *pt2 = cryptoMethod.decrypt(ct3, 1, cryptoMethod.getPublicParameters().getCiphBitsizeFromRecLvl(2)/8, cryptoMethod.getPublicParameters().getAbsorptionBitsize(1)/8);
 
     for (i=0; i<cryptoMethod.getPublicParameters().getAbsorptionBitsize(1)/8; i++) {
-        printf("%02x ", (unsigned char)pt[i]);
+        printf("%02x ", (unsigned char)pt2[i]);
     }
     cout<<endl;
 

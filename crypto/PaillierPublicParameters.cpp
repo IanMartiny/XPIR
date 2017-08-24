@@ -143,7 +143,12 @@ void PaillierPublicParameters::setMockedPubKey()
   pubkey.init_key(getKeyBitsize());
 }
     
+
+unsigned int (PaillierPublicParameters::*getAbsorptionBitsizex1)(unsigned int) = &PaillierPublicParameters::getAbsorptionBitsize;
+
 BOOST_PYTHON_MODULE(libPaillierPublicParameters){
     class_<PaillierPublicParameters>("PaillierPublicParameters", init<>())
+    .def("getCiphBitsizeFromRecLvl", &PaillierPublicParameters::getCiphBitsizeFromRecLvl)
+    .def("getAbsorptionBitsize", getAbsorptionBitsizex1)
         ;
 }

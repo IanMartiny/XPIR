@@ -34,6 +34,7 @@ class PaillierPublicParameters : public AbstractPublicParameters {
 		paillier_pubkey pubkey;
 
 	public:
+        unsigned int getAbsorptionBitsizex1(unsigned int);
 		unsigned int getCiphBitsizeFromRecLvl(unsigned int);
     unsigned int getCiphertextBitsize();
 		unsigned int getQuerySizeFromRecLvl(unsigned int);

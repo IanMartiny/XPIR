@@ -16,14 +16,13 @@
 */
 
 #include "PaillierAdapter.hpp"
+#include "base64.h"
+
 #include <set>
 #include <iostream>
 #include <cstdio>
-#include <boost/python.hpp>
-#include <Python.h>
 #include <string>
 
-using namespace boost::python;
 namespace {
 const int kMagicConstant1 = 1;
 const int kMillion = 1000000;
@@ -638,13 +637,29 @@ void PaillierAdapter::e_mul_const(mpz_t res, mpz_t a, mpz_t n, int s)
 std::string PaillierAdapter::encrypt1(unsigned int a, unsigned int b){
   char *p = encrypt(a,b);
 
-  return std::string(p);
+  return base64_encode(reinterpret_cast<const unsigned char*>(p), this->getPublicParameters().getAbsorptionBitsize(b-1)/8);
 }
 
-std::string PaillierAdapter::decrypt1(char* cipheredData, unsigned int rec_lvl, size_t a, size_t b){
-  char *p = decrypt(cipheredData, rec_lvl, a, b);
+std::string PaillierAdapter::encrypt2(char* data, size_t dataSize,  unsigned int exponent){
+  char *p = encrypt(data, dataSize, exponent);
 
-  return std::string(p);
+  return base64_encode(reinterpret_cast<const unsigned char*>(p), this->getPublicParameters().getAbsorptionBitsize(exponent-1)/8);
+}
+
+std::string PaillierAdapter::decrypt1(std::string cipheredData, unsigned int rec_lvl, size_t a, size_t b){
+  std::string decoded = base64_decode(cipheredData);
+  size_t length = ((cipheredData.length()*3)/4)+1; // length of string times scaling factor of shrinking from base64
+  char *cD = new char [length];
+  strncpy(cD, decoded.c_str(), length);
+  char *p = decrypt(cD, rec_lvl, a, b);
+  int i;
+  for (i=0; i<this->getPublicParameters().getAbsorptionBitsize(rec_lvl-1)/8; i++) {
+    printf("%02x ", (unsigned char)p[i]);
+  }
+    cout<<endl;
+
+  delete [] cD;
+  return base64_encode(reinterpret_cast<const unsigned char*>(p), this->getPublicParameters().getAbsorptionBitsize(rec_lvl-1)/8);
 }
 
 PaillierPublicParameters& PaillierAdapter::getPublicParameters1() 
@@ -652,6 +667,7 @@ PaillierPublicParameters& PaillierAdapter::getPublicParameters1()
   return publicParameters;
 }
 
+using namespace boost::python;
 BOOST_PYTHON_MODULE(libPaillierAdapter){
     class_<PaillierAdapter>("PaillierAdapter", init<>())
         // .def_readonly("cryptoName", &HomomorphicCrypto::cryptoName)
@@ -660,8 +676,12 @@ BOOST_PYTHON_MODULE(libPaillierAdapter){
         .def("e_add", &PaillierAdapter::e_add)
         .def("e_mul_const", &PaillierAdapter::e_mul_const)
         .def("encrypt", &PaillierAdapter::encrypt1)
+        .def("encrypt", &PaillierAdapter::encrypt2)
         .def("decrypt", &PaillierAdapter::decrypt1)
         .def("getPublicParameters", &PaillierAdapter::getPublicParameters1,
           return_internal_reference<>())
         ;
+
+    // class_<PaillierPublicParameters>("PaillierPublicParameters", init<>())
+    //     ;
 }
